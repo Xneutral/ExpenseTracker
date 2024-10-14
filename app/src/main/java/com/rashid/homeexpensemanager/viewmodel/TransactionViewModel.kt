@@ -5,10 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rashid.homeexpensemanager.data.model.Transaction
-import com.rashid.homeexpensemanager.data.room.TransactionDb
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import com.rashid.homeexpensemanager.data.repository.TransactionRepository
 import kotlinx.coroutines.launch
 
 class TransactionViewModel  : ViewModel() {
@@ -17,18 +14,18 @@ class TransactionViewModel  : ViewModel() {
     var transactions = mutableStateOf<List<Transaction>>(emptyList())
     private set
 
+    private val transactionRepository = TransactionRepository()
+
     // Add a new transaction
     fun addTransaction(context : Context, transaction: Transaction) {
         viewModelScope.launch {
-            val db = TransactionDb.getDatabase(context)
-            db.transactionDao().insertTransaction(transaction)
+            transactionRepository.addTransaction(context, transaction)
         }
     }
 
     fun getAllTransaction(context: Context){
         viewModelScope.launch {
-            val db = TransactionDb.getDatabase(context)
-            db.transactionDao().getAllTransactions().collect{
+            transactionRepository.getAllTransaction(context).collect{
                 transactions.value = it
             }
         }
