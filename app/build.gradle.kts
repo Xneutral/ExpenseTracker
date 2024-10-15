@@ -11,8 +11,8 @@ android {
 
     defaultConfig {
         applicationId = "com.rashid.homeexpensemanager"
-        minSdk = 24
-        targetSdk = 34
+        minSdk = 26
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -79,5 +79,7 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
     //navigation in compose
     implementation ("androidx.navigation:navigation-compose:2.8.2")
+    // chart library
+    implementation ("co.yml:ycharts:2.1.0")
 
 }

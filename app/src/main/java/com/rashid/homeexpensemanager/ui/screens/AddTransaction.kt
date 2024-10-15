@@ -32,16 +32,25 @@ import com.rashid.homeexpensemanager.viewmodel.TransactionViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTransactionScreen(onAddTransaction: () -> Unit, onCancel: () -> Unit,
-                         viewModel: TransactionViewModel) {
+fun AddTransactionScreen(
+    onAddTransaction: (addTransaction : Transaction) -> Unit,
+    onCancel: () -> Unit,
+    currentTransaction : Transaction?
+) {
     var description by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
     var isIncome by remember { mutableStateOf(true) }
 
-    val context = LocalContext.current
+
+    if (currentTransaction != null){
+        description = currentTransaction.description
+        amount = currentTransaction.amount.toString()
+        isIncome = currentTransaction.isIncome
+    }
+
     Scaffold(
         topBar = { TopAppBar(title = { Text("Add Transaction") }) }
-    ){innerPadding ->
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -53,16 +62,18 @@ fun AddTransactionScreen(onAddTransaction: () -> Unit, onCancel: () -> Unit,
                 value = description,
                 onValueChange = { description = it },
                 label = { Text("Description") },
-                modifier = Modifier.fillMaxWidth()
-                    .padding(16.dp,2.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp, 2.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
             TextField(
                 value = amount,
                 onValueChange = { amount = it },
                 label = { Text("Amount") },
-                modifier = Modifier.fillMaxWidth()
-                    .padding(16.dp,2.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp, 2.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Row(
@@ -81,15 +92,15 @@ fun AddTransactionScreen(onAddTransaction: () -> Unit, onCancel: () -> Unit,
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 Button(onClick = {
-                    if (description.isBlank() || amount.isBlank() ) return@Button
-                    viewModel.addTransaction(
-                        context,
+                    if (description.isBlank() || amount.isBlank()) return@Button
+                    onAddTransaction(
                         Transaction(
-                            id = 0,
-                           description =  description,
-                           amount =  amount.toDouble(),
-                            isIncome = isIncome))
-                    onAddTransaction()
+                            id = currentTransaction?.id ?: 0,
+                            description = description,
+                            amount = amount.toDouble(),
+                            isIncome = isIncome
+                        )
+                    )
                 }) {
                     Text("Add")
                 }

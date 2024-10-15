@@ -16,14 +16,29 @@ class TransactionRepository {
     suspend fun addTransaction(context: Context, transaction: Transaction) {
         CoroutineScope(Dispatchers.IO)
             .launch {
-                val db  =  TransactionDb.getDatabase(context)
+                val db = TransactionDb.getDatabase(context)
                 db.transactionDao().insertTransaction(transaction)
             }
     }
 
-    fun getAllTransaction(context: Context) : Flow<List<Transaction>> {
-        val db  =  TransactionDb.getDatabase(context)
+    fun getAllTransaction(context: Context): Flow<List<Transaction>> {
+        val db = TransactionDb.getDatabase(context)
         return db.transactionDao().getAllTransactions()
+    }
+
+
+    fun getTransactionById(context: Context, id: Int) : Flow<Transaction>{
+        val db = TransactionDb.getDatabase(context)
+        return db.transactionDao().getTransactionById(id)
+    }
+
+
+    suspend fun deleteTransaction(context: Context, id: Int){
+        CoroutineScope(Dispatchers.IO)
+            .launch {
+                val db = TransactionDb.getDatabase(context)
+                db.transactionDao().deleteTransactionById(id)
+            }
     }
 
 

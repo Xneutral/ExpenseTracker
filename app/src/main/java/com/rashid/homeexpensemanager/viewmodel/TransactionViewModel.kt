@@ -16,6 +16,9 @@ class TransactionViewModel  : ViewModel() {
 
     private val transactionRepository = TransactionRepository()
 
+    var currentTransaction = mutableStateOf<Transaction?>(null)
+        private set
+
     // Add a new transaction
     fun addTransaction(context : Context, transaction: Transaction) {
         viewModelScope.launch {
@@ -28,6 +31,20 @@ class TransactionViewModel  : ViewModel() {
             transactionRepository.getAllTransaction(context).collect{
                 transactions.value = it
             }
+        }
+    }
+
+    fun getTransactionById(context: Context, id: Int){
+        viewModelScope.launch {
+            transactionRepository.getTransactionById(context, id).collect{
+                currentTransaction.value = it
+            }
+        }
+    }
+
+    fun deleteTransactionById(context: Context, id: Int){
+        viewModelScope.launch {
+            transactionRepository.deleteTransaction(context, id)
         }
     }
 
