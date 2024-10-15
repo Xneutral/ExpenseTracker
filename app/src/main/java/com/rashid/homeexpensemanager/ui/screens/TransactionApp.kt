@@ -23,8 +23,7 @@ fun TransactionApp(viewModel: TransactionViewModel) {
     val transactions = viewModel.transactions.value
     val context = LocalContext.current
 
-    val currentTransaction = viewModel.currentTransaction.value
-
+    var currentTransaction = viewModel.currentTransaction.value
 
     viewModel.getAllTransaction(context)
 
@@ -33,12 +32,15 @@ fun TransactionApp(viewModel: TransactionViewModel) {
         composable("transaction_list") {
             TransactionListScreen(
                 transactions = transactions,
-                onAddTransactionClick = { navController.navigate("add_transaction") },
+                onAddTransactionClick = {
+                    currentTransaction = null
+                    navController.navigate("add_transaction")
+                },
                 onEditTransactionClick = { editTransaction ->
                     viewModel.getTransactionById(context, editTransaction.id)
                     navController.navigate("add_transaction")
                 },
-                onDeleteTransactionClick = {deleteTransaction ->
+                onDeleteTransactionClick = { deleteTransaction ->
                     //delete here
                     viewModel.deleteTransactionById(context, deleteTransaction.id)
                 }

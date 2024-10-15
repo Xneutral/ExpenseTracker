@@ -1,6 +1,5 @@
 package com.rashid.homeexpensemanager.ui.screens
 
-import androidx.compose.animation.VectorConverter
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,10 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -32,14 +28,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import co.yml.charts.common.model.PlotType
+import co.yml.charts.ui.piechart.charts.DonutPieChart
+import co.yml.charts.ui.piechart.models.PieChartConfig
+import co.yml.charts.ui.piechart.models.PieChartData
 import com.rashid.homeexpensemanager.R
 import com.rashid.homeexpensemanager.data.model.Transaction
-import com.rashid.homeexpensemanager.viewmodel.TransactionViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,6 +65,9 @@ fun TransactionListScreen(
 
 
             BalanceCard(balance = balance, totalIncome = totalIncome, totalExpense = totalExpenses)
+
+//            DonutChartView(balance = balance, totalIncome = totalIncome, totalExpense = totalExpenses)
+
             // Show transaction list
             TransactionList(transactions, { editTransaction ->
                 onEditTransactionClick(editTransaction)
@@ -126,18 +127,20 @@ fun TransactionItem(
             Image(
                 painter = painterResource(id = R.drawable.edit_ic),
                 contentDescription = null,
-                modifier = Modifier.clickable {
-                    onEdit(transaction)
-                }
+                modifier = Modifier
+                    .clickable {
+                        onEdit(transaction)
+                    }
                     .height(38.dp)
                     .width(38.dp)
             )
             Image(
                 painter = painterResource(id = R.drawable.delete_ic),
                 contentDescription = null,
-                modifier = Modifier.clickable {
-                    onDelete(transaction)
-                }
+                modifier = Modifier
+                    .clickable {
+                        onDelete(transaction)
+                    }
                     .height(38.dp)
                     .width(38.dp)
             )
@@ -216,3 +219,33 @@ fun BalanceCard(balance: Double, totalIncome: Double, totalExpense: Double) {
         }
     }
 }
+
+@Composable
+fun DonutChartView(balance: Double, totalIncome: Double, totalExpense: Double) {
+
+    // Data for the donut chart
+    val sliceDataList = listOf(
+        PieChartData.Slice(value = totalExpense.toFloat(), color = Color.Red, label = "Total Expense"),  // Expense part
+        PieChartData.Slice(value = balance.toFloat(), color = Color.Green,label = "Remaining Balance"),  // Remaining balance part
+    )
+
+    // Title and chart visualization
+    Column(
+        modifier = Modifier
+            .height(300.dp)
+            .width(200.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(text = "Expense vs Remaining Balance", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+
+        DonutPieChart(
+            modifier = Modifier
+                .height(100.dp)
+                .width(200.dp),
+            pieChartData = PieChartData(sliceDataList, PlotType.Donut),
+            pieChartConfig = PieChartConfig()
+        )
+    }
+}
+

@@ -33,20 +33,24 @@ import com.rashid.homeexpensemanager.viewmodel.TransactionViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTransactionScreen(
-    onAddTransaction: (addTransaction : Transaction) -> Unit,
+    onAddTransaction: (addTransaction: Transaction) -> Unit,
     onCancel: () -> Unit,
-    currentTransaction : Transaction?
+    currentTransaction: Transaction?
 ) {
-    var description by remember { mutableStateOf("") }
-    var amount by remember { mutableStateOf("") }
-    var isIncome by remember { mutableStateOf(true) }
-
-
-    if (currentTransaction != null){
-        description = currentTransaction.description
-        amount = currentTransaction.amount.toString()
-        isIncome = currentTransaction.isIncome
+    var description by remember { mutableStateOf(currentTransaction?.description ?: "") }
+    var amount by remember {
+        mutableStateOf(
+            if (currentTransaction?.amount.toString() == "null") {
+                ""
+            } else {
+                currentTransaction?.amount.toString()
+            }
+        )
     }
+    var isIncome by remember { mutableStateOf(currentTransaction?.isIncome ?: true) }
+
+
+
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("Add Transaction") }) }
